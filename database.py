@@ -64,6 +64,9 @@ class GenerationData(Base):
     source_id = Column(Integer, ForeignKey('generation_sources.id'))
     source = relationship("GenerationSource", back_populates="generation_data")
 
+import csv
+from datetime import datetime
+
 def create_database():
     """Creates the database and all tables."""
     # Ensure the database directory exists
@@ -73,6 +76,30 @@ def create_database():
     engine = create_engine(db_uri)
     Base.metadata.create_all(engine)
     print(f"Database created at {db_path}")
+
+def process_load_data(session, file_path, meter_id):
+    """Processes an uploaded load data file and inserts data into the database."""
+    with open(file_path, 'r') as f:
+        reader = csv.reader(f)
+        next(reader)  # Skip header
+        for row in reader:
+            timestamp = datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S')
+            load_mw = float(row[1])
+            load_data = LoadData(timestamp=timestamp, load_mw=load_mw, meter_id=meter_id)
+            session.add(load_data)
+    session.commit()
+
+def process_generation_data(session, file_path, source_id):
+    """Processes an uploaded generation data file and inserts data into the database."""
+    with open(file_path, 'r') as f:
+        reader = csv.reader(f)
+        next(reader)  # Skip header
+        for row in reader:
+            timestamp = datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S')
+            generation_mw = float(row[1])
+            generation_data = GenerationData(timestamp=timestamp, generation_mw=generation_mw, source_id=source_id)
+            session.add(generation_data)
+    session.commit()
 
 if __name__ == '__main__':
     create_database()
