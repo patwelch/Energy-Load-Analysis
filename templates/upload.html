@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block content %}
+  <h1>Upload Data</h1>
+  <form method="post" enctype="multipart/form-data">
+    <label for="source_type">Source Type:</label>
+    <select name="source_type" id="source_type">
+      <option value="load">Load</option>
+      <option value="generation">Generation</option>
+    </select>
+    <br>
+    <label for="source_id">Source:</label>
+    <select name="source_id" id="source_id">
+      {# This will be populated dynamically with JavaScript #}
+    </select>
+    <br>
+    <label for="file">Data File:</label>
+    <input type="file" name="file" id="file">
+    <br>
+    <input type="submit" value="Upload">
+  </form>
+
+  <script>
+    const meters = {{ meters|tojson }};
+    const generationSources = {{ generation_sources|tojson }};
+    const sourceTypeSelect = document.getElementById('source_type');
+    const sourceIdSelect = document.getElementById('source_id');
+
+    function populateSources() {
+      const selectedType = sourceTypeSelect.value;
+      sourceIdSelect.innerHTML = ''; // Clear existing options
+
+      if (selectedType === 'load') {
+        meters.forEach(meter => {
+          const option = document.createElement('option');
+          option.value = meter.id;
+          option.textContent = meter.name;
+          sourceIdSelect.appendChild(option);
+        });
+      } else if (selectedType === 'generation') {
+        generationSources.forEach(source => {
+          const option = document.createElement('option');
+          option.value = source.id;
+          option.textContent = source.name;
+          sourceIdSelect.appendChild(option);
+        });
+      }
+    }
+
+    // Populate on page load
+    populateSources();
+
+    // Repopulate on change
+    sourceTypeSelect.addEventListener('change', populateSources);
+  </script>
+{% endblock %}
