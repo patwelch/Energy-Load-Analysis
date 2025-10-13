@@ -32,8 +32,25 @@ def upload():
     session = Session()
     if request.method == 'POST':
         source_type = request.form['source_type']
-        source_id = int(request.form['source_id'])
         file = request.files['file']
+
+        if 'new_source_checkbox' in request.form:
+            if source_type == 'load':
+                new_meter_name = request.form['new_meter_name']
+                building_id = int(request.form['building_id'])
+                new_meter = Meter(name=new_meter_name, building_id=building_id)
+                session.add(new_meter)
+                session.commit()
+                source_id = new_meter.id
+            elif source_type == 'generation':
+                new_generation_source_name = request.form['new_generation_source_name']
+                generation_source_type = request.form['generation_source_type']
+                new_source = GenerationSource(name=new_generation_source_name, type=generation_source_type)
+                session.add(new_source)
+                session.commit()
+                source_id = new_source.id
+        else:
+            source_id = int(request.form['source_id'])
 
         if file:
             temp_path = os.path.join('database', file.filename)
@@ -51,8 +68,9 @@ def upload():
 
     meters = session.query(Meter).all()
     generation_sources = session.query(GenerationSource).all()
+    buildings = session.query(Building).all()
     session.close()
-    return render_template('upload.html', meters=meters, generation_sources=generation_sources)
+    return render_template('upload.html', meters=meters, generation_sources=generation_sources, buildings=buildings)
 
 if __name__ == '__main__':
     if not os.path.exists(db_uri.split('///')[1]):
