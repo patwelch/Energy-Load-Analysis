@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for
-from database import db_uri, Customer, Facility, Building, Meter, GenerationSource, process_load_data, process_generation_data
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from database import db_uri, Customer, Facility, Building, Meter, GenerationSource, LoadData, GenerationData, process_load_data, process_generation_data
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import os
@@ -17,7 +17,11 @@ def shutdown_session(exception=None):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    session = Session()
+    meters = session.query(Meter).all()
+    generation_sources = session.query(GenerationSource).all()
+    session.close()
+    return render_template('index.html', meters=meters, generation_sources=generation_sources)
 
 @app.route('/sources')
 def sources():
@@ -71,6 +75,34 @@ def upload():
     buildings = session.query(Building).all()
     session.close()
     return render_template('upload.html', meters=meters, generation_sources=generation_sources, buildings=buildings)
+
+@app.route('/api/data')
+def get_data():
+    meter_id = request.args.get('meter_id', type=int)
+    generation_ids = request.args.getlist('generation_ids[]', type=int)
+
+    session = Session()
+
+    # Fetch load data
+    load_query = session.query(LoadData.timestamp, LoadData.load_mw).filter(LoadData.meter_id == meter_id)
+    load_data = {ts.isoformat(): l for ts, l in load_query.all()}
+
+    # Fetch generation data
+    generation_data = {}
+    for gen_id in generation_ids:
+        gen_query = session.query(GenerationData.timestamp, GenerationData.generation_mw).filter(GenerationData.source_id == gen_id)
+        for ts, gen_mw in gen_query.all():
+            ts_iso = ts.isoformat()
+            if ts_iso not in generation_data:
+                generation_data[ts_iso] = 0
+            generation_data[ts_iso] += gen_mw
+
+    session.close()
+
+    return jsonify({
+        'load': load_data,
+        'generation': generation_data
+    })
 
 if __name__ == '__main__':
     if not os.path.exists(db_uri.split('///')[1]):

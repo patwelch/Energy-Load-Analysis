@@ -1,5 +1,34 @@
-{% extends "layout.html" %}
-{% block content %}
-  <h1>Energy Load Analysis</h1>
-  <p><a href="{{ url_for('sources') }}">Select Sources and Upload Data</a></p>
-{% endblock %}
+!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Energy Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>Energy Dashboard</h1>
+    <div class="controls">
+        <select id="load-select">
+            <option value="">Select a Load</option>
+            {% for meter in meters %}
+                <option value="{{ meter.id }}">{{ meter.name }}</option>
+            {% endfor %}
+        </select>
+        <div id="generation-select">
+            <h3>Generation Sources</h3>
+            {% for source in generation_sources %}
+                <label>
+                    <input type="checkbox" name="generation" value="{{ source.id }}">
+                    {{ source.name }}
+                </label>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="chart-container">
+        <canvas id="energy-chart"></canvas>
+    </div>
+    <a href="{{ url_for('upload') }}">Upload New Data</a>
+    <script src="{{ url_for('static', filename='js/graph.js') }}"></script>
+</body>
+</html>
