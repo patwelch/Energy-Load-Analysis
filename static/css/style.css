@@ -29,11 +29,63 @@ body {
 
 .container {
     max-width: 1200px;
-    margin: 2rem auto;
+    margin: 0 auto;
     padding: 2rem;
-    background-color: var(--container-bg-color);
-    border-radius: 8px;
+}
+
+/* --- Header & Navigation --- */
+header {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 1rem 0;
     box-shadow: var(--box-shadow);
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    text-decoration: none;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+}
+
+nav li {
+    margin-left: 2rem;
+}
+
+nav a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+nav a:hover {
+    color: var(--secondary-color);
+}
+
+/* --- Main Content --- */
+main {
+    padding: 2rem 0;
+}
+
+/* --- Footer --- */
+footer {
+    background-color: #343A40;
+    color: #fff;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: 2rem;
 }
 
 /* --- Typography --- */
@@ -118,6 +170,23 @@ input:focus, select:focus {
 .btn-primary:hover {
     background-color: #004170; /* Darker shade of primary */
     text-decoration: none;
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.controls > div {
+    width: 48%;
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+.controls h3 {
+    margin-top: 0;
 }
 
 /* --- Chart Placeholder --- */

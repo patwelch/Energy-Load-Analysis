@@ -3,14 +3,34 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Energy Load Analysis</title>
+    <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   </head>
   <body>
-    <div class="container">
+    <header>
+      <div class="container">
+        <a href="{{ url_for('index') }}" class="logo">Energy Load Analysis</a>
+        <nav>
+          <ul>
+            <li><a href="{{ url_for('index') }}">Home</a></li>
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('upload') }}">Upload</a></li>
+            
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>
       {% block content %}{% endblock %}
-    </div>
+    </main>
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 Energy Load Analysis. All rights reserved.</p>
+      </div>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script src="{{ url_for('static', filename='js/graph.js') }}"></script>
+    {% block scripts %}{% endblock %}
   </body>
 </html>

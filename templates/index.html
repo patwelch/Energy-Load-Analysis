@@ -1,34 +1,14 @@
-!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Energy Dashboard</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <h1>Energy Dashboard</h1>
-    <div class="controls">
-        <select id="load-select">
-            <option value="">Select a Load</option>
-            {% for meter in meters %}
-                <option value="{{ meter.id }}">{{ meter.name }}</option>
-            {% endfor %}
-        </select>
-        <div id="generation-select">
-            <h3>Generation Sources</h3>
-            {% for source in generation_sources %}
-                <label>
-                    <input type="checkbox" name="generation" value="{{ source.id }}">
-                    {{ source.name }}
-                </label>
-            {% endfor %}
+{% extends "layout.html" %}
+{% block title %}Energy Load Analysis{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1>Welcome to the Energy Load Analysis Tool</h1>
+        <p>This application allows you to visualize and analyze energy consumption data against energy generation data. 
+           Upload your own hourly energy load data and overlay it with various energy generation sources to assess if the generation is sufficient to meet the demand.</p>
+        <div class="cta-buttons">
+            <a href="{{ url_for('dashboard') }}" class="btn">View Dashboard</a>
+            <a href="{{ url_for('upload') }}" class="btn">Upload Data</a>
+            
         </div>
     </div>
-    <div class="chart-container">
-        <canvas id="energy-chart"></canvas>
-    </div>
-    <a href="{{ url_for('upload') }}">Upload New Data</a>
-    <script src="{{ url_for('static', filename='js/graph.js') }}"></script>
-</body>
-</html>
+{% endblock %}

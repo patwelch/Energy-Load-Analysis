@@ -1,119 +1,49 @@
 {% extends "layout.html" %}
+{% block title %}Upload Data{% endblock %}
 {% block content %}
-  <h1>Upload Data</h1>
-  <form method="post" enctype="multipart/form-data">
-    <label for="source_type">Source Type:</label>
-    <select name="source_type" id="source_type">
-      <option value="load">Load</option>
-      <option value="generation">Generation</option>
-    </select>
-    <br>
+    <h1>Upload Data</h1>
+    <form method="post" enctype="multipart/form-data" class="form">
+        <div class="form-group">
+            <label for="source_type">Source Type:</label>
+            <select name="source_type" id="source_type" class="form-control">
+                <option value="load">Load</option>
+                <option value="generation">Generation</option>
+            </select>
+        </div>
 
-    <input type="checkbox" id="new_source_checkbox" name="new_source_checkbox">
-    <label for="new_source_checkbox">Add new source</label>
-    <br>
+        <div class="form-group">
+            <input type="checkbox" id="new_source_checkbox" name="new_source_checkbox">
+            <label for="new_source_checkbox">Add new source</label>
+        </div>
 
-    <div id="existing_source_div">
-      <label for="source_id">Source:</label>
-      <select name="source_id" id="source_id">
-        {# This will be populated dynamically with JavaScript #}
-      </select>
-    </div>
+        <div id="existing_source_div" class="form-group">
+            <label for="source_id">Source:</label>
+            <select name="source_id" id="source_id" class="form-control">
+                {# This will be populated dynamically with JavaScript #}
+            </select>
+        </div>
 
-    <div id="new_source_div" style="display: none;">
-      <div id="new_load_source">
-        <label for="new_meter_name">New Meter Name:</label>
-        <input type="text" id="new_meter_name" name="new_meter_name"><br>
-        <label for="building_id">Building:</label>
-        <select name="building_id" id="building_id">
-            {# This will be populated from the backend, once buildings are passed #}
-        </select>
-      </div>
-      <div id="new_generation_source" style="display: none;">
-        <label for="new_generation_source_name">New Generation Source Name:</label>
-        <input type="text" id="new_generation_source_name" name="new_generation_source_name"><br>
-        <label for="generation_source_type">Type:</label>
-        <input type="text" id="generation_source_type" name="generation_source_type"><br>
-      </div>
-    </div>
+        <div id="new_source_div" style="display: none;">
+            <div id="new_load_source" class="form-group">
+                <label for="new_meter_name">New Meter Name:</label>
+                <input type="text" id="new_meter_name" name="new_meter_name" class="form-control"><br>
 
-    <br>
-    <label for="file">Data File:</label>
-    <input type="file" name="file" id="file">
-    <br>
-    <input type="submit" value="Upload">
-  </form>
+            </div>
+            <div id="new_generation_source" style="display: none;" class="form-group">
+                <label for="new_generation_source_name">New Generation Source Name:</label>
+                <input type="text" id="new_generation_source_name" name="new_generation_source_name" class="form-control"><br>
+                <label for="generation_source_type">Type:</label>
+                <input type="text" id="generation_source_type" name="generation_source_type" class="form-control"><br>
+            </div>
+        </div>
 
-  <script>
-    const meters = {{ meters|tojson }};
-    const generationSources = {{ generation_sources|tojson }};
-    const buildings = {{ buildings|tojson|default([]) }};
-    const sourceTypeSelect = document.getElementById('source_type');
-    const sourceIdSelect = document.getElementById('source_id');
-    const newSourceCheckbox = document.getElementById('new_source_checkbox');
-    const existingSourceDiv = document.getElementById('existing_source_div');
-    const newSourceDiv = document.getElementById('new_source_div');
-    const newLoadSourceDiv = document.getElementById('new_load_source');
-    const newGenerationSourceDiv = document.getElementById('new_generation_source');
-    const buildingIdSelect = document.getElementById('building_id');
+        <div class="form-group">
+            <label for="file">Data File:</label>
+            <input type="file" name="file" id="file" class="form-control">
+        </div>
 
-    function populateSources() {
-      const selectedType = sourceTypeSelect.value;
-      sourceIdSelect.innerHTML = ''; // Clear existing options
-
-      if (selectedType === 'load') {
-        newLoadSourceDiv.style.display = 'block';
-        newGenerationSourceDiv.style.display = 'none';
-        meters.forEach(meter => {
-          const option = document.createElement('option');
-          option.value = meter.id;
-          option.textContent = meter.name;
-          sourceIdSelect.appendChild(option);
-        });
-      } else if (selectedType === 'generation') {
-        newLoadSourceDiv.style.display = 'none';
-        newGenerationSourceDiv.style.display = 'block';
-        generationSources.forEach(source => {
-          const option = document.createElement('option');
-          option.value = source.id;
-          option.textContent = source.name;
-          sourceIdSelect.appendChild(option);
-        });
-      }
-    }
-
-    function populateBuildings() {
-        buildingIdSelect.innerHTML = '';
-        if (buildings) {
-            buildings.forEach(building => {
-                const option = document.createElement('option');
-                option.value = building.id;
-                option.textContent = building.name;
-                buildingIdSelect.appendChild(option);
-            });
-        }
-    }
-
-    function toggleNewSourceForm() {
-        if (newSourceCheckbox.checked) {
-            existingSourceDiv.style.display = 'none';
-            newSourceDiv.style.display = 'block';
-            sourceIdSelect.disabled = true;
-        } else {
-            existingSourceDiv.style.display = 'block';
-            newSourceDiv.style.display = 'none';
-            sourceIdSelect.disabled = false;
-        }
-    }
-
-    // Populate on page load
-    populateSources();
-    populateBuildings();
-
-
-    // Repopulate on change
-    sourceTypeSelect.addEventListener('change', populateSources);
-    newSourceCheckbox.addEventListener('change', toggleNewSourceForm);
-
-  </script>
+        <button type="submit" class="btn btn-primary">Upload</button>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Energy Analysis Dashboard</h1>
+            <p>Select the data sources to visualize on the chart.</p>
+        </div>
+        <div class="controls-container">
+            <div class="control-group">
+                <h3>Load Meters</h3>
+                <label><input type="checkbox" id="select-all-load"> Select All</label>
+                <div id="load-select" class="checkbox-list">
+                    {% for meter in meters %}
+                    <label><input type="checkbox" name="load" value="{{ meter.id }}"> {{ meter.name }}</label>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="control-group">
+                <h3>Generation Sources</h3>
+                <label><input type="checkbox" id="select-all-generation"> Select All</label>
+                <div id="generation-select" class="checkbox-list">
+                    {% for source in generation_sources %}
+                    <label><input type="checkbox" name="generation" value="{{ source.id }}"> {{ source.name }}</label>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="chart-container" style="position: relative; height:60vh; width:80vw">
+            <canvas id="energyChart"></canvas>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+{% endblock %}
